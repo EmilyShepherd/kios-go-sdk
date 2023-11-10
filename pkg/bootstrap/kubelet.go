@@ -17,8 +17,16 @@ const CredentialProviderConfigPath = "/etc/kubernetes/credential-providers.yaml"
 // Generates a KubeConfig file for Kubelet, marshals it to YAML, and
 // saves it
 func (b *Bootstrap) SaveKubeConfig() error {
+	endpoint := b.Provider.GetClusterEndpoint()
+
+	// If the Provider does not provide an api-server endpoint, we should
+	// not create a kubeconfig file.
+	if endpoint == "" {
+		return nil
+	}
+
 	kubeConfig := DefaultKubeConfig()
-	kubeConfig.Clusters[0].Cluster.Server = b.Provider.GetClusterEndpoint()
+	kubeConfig.Clusters[0].Cluster.Server = endpoint
 	kubeConfig.AuthInfos = []kubeconfig.NamedAuthInfo{kubeconfig.NamedAuthInfo{
 		Name:     "default",
 		AuthInfo: b.Provider.GetClusterAuthInfo(),
