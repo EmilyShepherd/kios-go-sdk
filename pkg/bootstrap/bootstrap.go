@@ -40,6 +40,7 @@ func (b *Bootstrap) Run() {
 	b.SaveClusterCA()
 	b.SaveCredentialProviderConfig()
 	b.SaveHostnameFile()
+	b.SaveNameservers()
 	b.SaveNodeLabels()
 	b.SaveKubeConfig()
 	b.SaveKubeletConfiguration()

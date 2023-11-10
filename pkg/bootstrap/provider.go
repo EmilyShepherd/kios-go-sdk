@@ -21,4 +21,5 @@ type BootstrapInformationProvider interface {
 	GetClusterAuthInfo() kubeconfig.AuthInfo
 	GetContainerRuntimeConfiguration() ContainerRuntimeConfiguration
 	GetKubeletConfiguration(kubelet.KubeletConfiguration) kubelet.KubeletConfiguration
+	GetNameservers() []string
 }
