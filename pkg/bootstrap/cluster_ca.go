@@ -19,16 +19,18 @@ type Cert struct {
 
 // Saves a byte stream to the given disk if it is not empty. This is
 // used by SaveClusterCA as the private key is optional.
-func saveIfPresent(data []byte, path string, mode os.FileMode) error {
-	if len(data) > 0 {
-		if err := os.WriteFile(path, data, mode); err != nil {
-			return fmt.Errorf("Could not write cluster CA file to disk: %s", err)
-		}
-
-		klog.Infof("Cluster CA file written to disk: %s", path)
+func saveIfPresent(data []byte, path string, mode os.FileMode) (bool, error) {
+	if len(data) == 0 {
+		return false, nil
 	}
 
-	return nil
+	if err := os.WriteFile(path, data, mode); err != nil {
+		return false, fmt.Errorf("Could not write cluster CA file to disk: %s", err)
+	}
+
+	klog.Infof("Cluster CA file written to disk: %s", path)
+
+	return true, nil
 }
 
 // Saves the cluster's CA data to the correct location on disk
@@ -39,10 +41,14 @@ func (b *Bootstrap) SaveClusterCA() error {
 		return fmt.Errorf("Could not create Cluster CA Directory: %s", err)
 	}
 
-	if err := saveIfPresent(ca.Cert, ClusterCACertPath, 0644); err != nil {
+	saved, err := saveIfPresent(ca.Cert, ClusterCACertPath, 0644)
+	if err != nil {
 		return err
 	}
-	if err := saveIfPresent(ca.Key, ClusterCAKeyPath, 0600); err != nil {
+
+	b.clusterCaSaved = saved
+
+	if _, err = saveIfPresent(ca.Key, ClusterCAKeyPath, 0600); err != nil {
 		return err
 	}
 

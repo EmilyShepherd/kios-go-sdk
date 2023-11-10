@@ -45,6 +45,10 @@ func (b *Bootstrap) SaveKubeletConfiguration() error {
 		klog.Warning(err.Error())
 	}
 
+	if b.clusterCaSaved {
+		kubeletConfig.Authentication.X509.ClientCAFile = ClusterCACertPath
+	}
+
 	kubeletConfig = b.Provider.GetKubeletConfiguration(kubeletConfig)
 
 	return yaml.YamlToFile(kubeletConfig, KubeletConfigurationPath, 0644)

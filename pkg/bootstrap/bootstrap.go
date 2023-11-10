@@ -17,6 +17,11 @@ type Bootstrap struct {
 	// These are always processed before anything else, to allow time for
 	// background copying on slow harddrives.
 	Binaries []string
+
+	// An internal flag used to indicate whether a CA certificate was
+	// written. If it was, we'll set the path to it in the
+	// KubeletConfiguration.
+	clusterCaSaved bool
 }
 
 // Run a standard node bootstrap. Alternatively you may call each step

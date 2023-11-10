@@ -38,7 +38,7 @@ func DefaultKubeletConfiguration() kubelet.KubeletConfiguration {
 		},
 		Authentication: kubelet.KubeletAuthentication{
 			X509: kubelet.KubeletX509Authentication{
-				ClientCAFile: ClusterCACertPath,
+				ClientCAFile: "",
 			},
 		},
 		ShutdownGracePeriod: metav1.Duration{
