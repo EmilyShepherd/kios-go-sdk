@@ -39,7 +39,7 @@ func (b *Bootstrap) SaveKubeConfig() error {
 // settings to it, before remarshalling it as YAML and saving it back to
 // disk
 func (b *Bootstrap) SaveKubeletConfiguration() error {
-	kubeletConfig := DefaultKubeletConfiguration()
+	kubeletConfig := DefaultKubeletConfiguration(b.Provider.GetClusterEndpoint() != "")
 
 	if err := yaml.YamlFromFile(KubeletConfigurationPath, &kubeletConfig); err != nil {
 		klog.Warning(err.Error())

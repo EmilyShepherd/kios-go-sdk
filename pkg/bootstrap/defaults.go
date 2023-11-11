@@ -30,16 +30,24 @@ func DefaultKubeConfig() kubeconfig.Config {
 	}
 }
 
-func DefaultKubeletConfiguration() kubelet.KubeletConfiguration {
+func DefaultKubeletConfiguration(hasClient bool) kubelet.KubeletConfiguration {
+	mode := kubelet.KubeletAuthorizationModeWebhook
+	if !hasClient {
+		mode = kubelet.KubeletAuthorizationModeAlwaysAllow
+	}
+
 	return kubelet.KubeletConfiguration{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: kubelet.SchemeGroupVersion.Identifier(),
 			Kind:       "KubeletConfiguration",
 		},
 		Authentication: kubelet.KubeletAuthentication{
-			X509: kubelet.KubeletX509Authentication{
-				ClientCAFile: "",
+			Webhook: kubelet.KubeletWebhookAuthentication{
+				Enabled: &hasClient,
 			},
+		},
+		Authorization: kubelet.KubeletAuthorization{
+			Mode: mode,
 		},
 		ShutdownGracePeriod: metav1.Duration{
 			Duration: 30 * time.Second,
