@@ -58,12 +58,17 @@ func (b *Bootstrap) SaveKubeletConfiguration() error {
 // credentials
 func (b *Bootstrap) SaveCredentialProviderConfig() error {
 	config := DefaultCredentialProviderConfig()
+	providers := b.Provider.GetCredentialProviders()
+
+	if len(providers) == 0 {
+		return nil
+	}
 
 	if err := yaml.YamlFromFile(CredentialProviderConfigPath, &config); err != nil {
 		klog.Warning(err.Error())
 	}
 
-	for _, provider := range b.Provider.GetCredentialProviders() {
+	for _, provider := range providers {
 		idx := slices.IndexFunc(
 			config.Providers,
 			func(p kubelet.CredentialProvider) bool {
